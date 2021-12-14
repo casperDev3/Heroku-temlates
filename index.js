@@ -1,7 +1,22 @@
 const express = require('express')
+const bodyParser = require('body-parser');
 const app = express()
 const port = 3000;
 const axios = require('axios');
+const http = require("http");
+const https = require('https');
+var cors = require("cors");
+
+app.use(express.static("public"));
+app.use(bodyParser.json());
+app.use(cors());
+
+
+
+const server = http.createServer(app);
+server.listen(process.env.PORT || 5000, () =>
+    console.log("Server started " + process.env.PORT)
+);
 
 app.get('/summa', (req, res) => {
 
@@ -23,14 +38,15 @@ app.get('/getName', (req, res) => {
 })
 
 
+
 app.get('/getPhrase', async (req, res) => {
-	let count = 3;
-	if(req.query.count){
-		count = req.query.count;
-	}
+    let count = 3;
+    if (req.query.count) {
+        count = req.query.count;
+    }
     console.log('start');
     try {
-        let quote = await axios.get('https://goquotes-api.herokuapp.com/api/v1/random?count='+count)
+        let quote = await axios.get('https://goquotes-api.herokuapp.com/api/v1/random?count=' + count)
             .then((response) => {
                 console.log(response.data);
                 return response.data.quotes;
@@ -39,7 +55,7 @@ app.get('/getPhrase', async (req, res) => {
                 console.log('error');
                 return error;
             })
-            res.send(quote)
+        res.send(quote)
     } catch {
         console.log('end');
         res.send('error')
@@ -49,8 +65,3 @@ app.get('/getPhrase', async (req, res) => {
 
 
 
-
-
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-})
